@@ -14,7 +14,8 @@ import time
 from rgbmatrix import Adafruit_RGBmatrix
 
 #main_dir = os.getcwd()
-main_dir = "/home/alex/nhl_scoreboard"
+# edit below to reflect where you have the files
+main_dir = "<path to files>/nhl_scoreboard"
 
 white = (255, 255, 255)
 gray = (127, 127, 127)
