@@ -206,29 +206,29 @@ if __name__ == "__main__":
 
 			# teams
 			draw.text((x, y + fontYoffset),
-						  teams[home_team], font=font, fill=home_team_color)
+						  teams[away_team], font=font, fill=away_team_color)
                         # x += font.getsize(teams[home_team])[0]
                         x = 40 
 			draw.text((x, y + fontYoffset),
-						  teams[away_team], font=font, fill=away_team_color)
+						  teams[home_team], font=font, fill=home_team_color)
                         x = 0
                         y += 11 
 
                         # scores
                         x += 8
                         draw.text((x, y + fontYoffset),
-                                                  str(home_score), font=font_big, fill=home_score_color)
+                                                  str(away_score), font=font_big, fill=away_score_color)
                         x = 40 
                         x += 8 
                         draw.text((x, y + fontYoffset),
-                                                  str(away_score), font=font_big, fill=away_score_color)
+                                                  str(home_score), font=font_big, fill=home_score_color)
                         # shots on goal
                         x = 8
                         y = 24
-                        draw.text((x, y + fontYoffset), str(home_sog), font=font_small, fill=gray)
+                        draw.text((x, y + fontYoffset), str(away_sog), font=font_small, fill=gray)
                         x = 40 
                         x += 8
-                        draw.text((x, y + fontYoffset), str(away_sog), font=font_small, fill=gray)
+                        draw.text((x, y + fontYoffset), str(home_sog), font=font_small, fill=gray)
 
                         # period
                         y = 15
