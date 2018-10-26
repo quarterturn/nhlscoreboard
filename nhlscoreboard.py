@@ -172,7 +172,7 @@ if __name__ == "__main__":
                         #print("Home team: {0} Home score: {1} Away team: {2} Away score: {3}".format( teams[home_team], home_score, teams[away_team], away_score)) 
 
                         # get stats from the game
-                        current_period, home_sog, away_sog, home_powerplay, away_powerplay = nhl.fetch_live_stats(live_stats_link) 
+                        current_period, home_sog, away_sog, home_powerplay, away_powerplay, time_remaining = nhl.fetch_live_stats(live_stats_link) 
 
 
                         # determine score colors
@@ -229,6 +229,9 @@ if __name__ == "__main__":
                         x = 40 
                         x += 8
                         draw.text((x, y + fontYoffset), str(home_sog), font=font_small, fill=gray)
+                        x -= 28
+                        # time remaining in period
+                        draw.text((x, y + fontYoffset), str(time_remaining), font=font_small, fill=yellow)
 
                         # period
                         y = 15
