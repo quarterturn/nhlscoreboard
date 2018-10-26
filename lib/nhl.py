@@ -44,7 +44,10 @@ def fetch_live_stats(link):
         away_sog = int(stuff['liveData']['linescore']['teams']['away']['shotsOnGoal'])
         home_powerplay = int(stuff['liveData']['linescore']['teams']['home']['powerPlay'])
         away_powerplay = int(stuff['liveData']['linescore']['teams']['away']['powerPlay'])
-        time_remaining = stuff['liveData']['linescore']['currentPeriodTimeRemaining']
+        try:
+            time_remaining = stuff['liveData']['linescore']['currentPeriodTimeRemaining']
+        except KeyError:
+	    time_remaining = "00:00"
         return current_period, home_sog, away_sog, home_powerplay, away_powerplay, time_remaining
     except requests.exceptions.RequestException:
         print("Error encountered getting live stats")

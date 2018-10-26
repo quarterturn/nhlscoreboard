@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 import datetime
 import time
 import os
@@ -223,7 +221,7 @@ if __name__ == "__main__":
                         draw.text((x, y + fontYoffset),
                                                   str(home_score), font=font_big, fill=home_score_color)
                         # shots on goal
-                        x = 8
+                        x = 4
                         y = 24
                         draw.text((x, y + fontYoffset), str(away_sog), font=font_small, fill=gray)
                         x = 40 
