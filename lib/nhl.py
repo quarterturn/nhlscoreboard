@@ -52,7 +52,30 @@ def fetch_live_stats(link):
     except requests.exceptions.RequestException:
         print("Error encountered getting live stats")
          
+def fetch_rosters(link):
+    """ Function to get the home and away team roster """
+    url = '{0}{1}'.format(NHL_API_URL_BASE, link)
+    response = requests.get(url)
+    stuff = response.json()
+    try:
+        home_roster = stuff['liveData']['boxscore']['teams']['home']['players']
+        away_roster = stuff['liveData']['boxscore']['teams']['away']['players']
+        return home_roster, away_roster
+    except requests.exceptions.RequestException:
+        print("Error encountered getting live stats")
 
+def players_on_ice(link):
+    """ Function to get the home and away team roster """
+    url = '{0}{1}'.format(NHL_API_URL_BASE, link)
+    response = requests.get(url)
+    stuff = response.json() 
+    try:
+        home_on_ice = stuff['liveData']['boxscore']['teams']['home']['onIce']
+        away_on_ice = stuff['liveData']['boxscore']['teams']['away']['onIce']
+        return home_on_ice, away_on_ice
+    except requests.exceptions.RequestException:
+        print("Error encountered getting live stats")
+    
 def fetch_game(team_id):
     """ Function to get the scores of the game depending on the chosen team.
     Inputs the team ID and returns the score found on web. """
