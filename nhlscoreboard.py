@@ -185,15 +185,19 @@ if __name__ == "__main__":
                         home_ice_list = []
                         away_ice_list = []
                         for the_id in home_on_ice:
-                            jersey_number = home_roster['ID'+str(the_id)]['jerseyNumber']
+                            jersey_number = (home_roster['ID'+str(the_id)]['jerseyNumber']).encode("ascii")
+                            if (int(jersey_number)) < 10:
+                                jersey_number = ' ' + jersey_number
                             # hopefully all the names are first last
                             # if not we will have to count the list from split and take the last one
-                            last_name = (home_roster['ID'+str(the_id)]['person']['fullName']).split()[1]
-                            home_ice_list.append(jersey_number+' '+last_name)
+                            last_name = (((home_roster['ID'+str(the_id)]['person']['fullName']).split(' ', 1))[1]).encode("ascii")
+                            home_ice_list.append(jersey_number+' '+last_name.upper())
                         for the_id in away_on_ice:
-                            jersey_number = away_roster['ID'+str(the_id)]['jerseyNumber']
-                            last_name = (away_roster['ID'+str(the_id)]['person']['fullName']).split()[1]
-                            away_ice_list.append(jersey_number+' '+last_name)
+                            jersey_number = (away_roster['ID'+str(the_id)]['jerseyNumber']).encode("ascii")
+                            if (int(jersey_number)) < 10:
+                                jersey_number = '  ' + jersey_number
+                            last_name = (((away_roster['ID'+str(the_id)]['person']['fullName']).split(' ', 1))[1]).encode("ascii")
+                            away_ice_list.append(jersey_number+' '+last_name.upper())
                             
 
                         # determine score colors
@@ -258,7 +262,7 @@ if __name__ == "__main__":
 #                        y = 15
 #                        x = 28
 #                        draw.text((x, y + fontYoffset), str(current_period), font=font_small, fill=yellow)
-                        if team_id != home_team:
+                        if team_id == home_team:
                             for line in home_ice_list:
                                 draw.text((x, y + fontYoffset), line, font=font_small, fill=gray) 
                                 y += 7
