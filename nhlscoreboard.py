@@ -262,7 +262,7 @@ if __name__ == "__main__":
 #                        y = 15
 #                        x = 28
 #                        draw.text((x, y + fontYoffset), str(current_period), font=font_small, fill=yellow)
-                        if team_id == home_team:
+                        if int(team_id) == home_team:
                             for line in home_ice_list:
                                 draw.text((x, y + fontYoffset), line, font=font_small, fill=gray) 
                                 y += 7
