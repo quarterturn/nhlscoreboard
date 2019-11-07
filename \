@@ -87,6 +87,7 @@ class scoreboard(object):
 
 
     def run(self):
+        print("hellooooo?")
 
         options = RGBMatrixOptions()
         options.rows = 32
@@ -94,18 +95,19 @@ class scoreboard(object):
         options.chain_length = 4
         options.parallel = 1
         options.hardware_mapping = "adafruit-hat-pwm"
-        options.pixel_mapper_config = "U-mapper"
+        options.pixel_mapper_config = 'U-mapper'
         options.row_address_type = 0
         options.multiplexing = 0
         options.pwm_bits = 11
         options.brightness = 100
         options.pwm_lsb_nanoseconds = 130
-        options.led_rgb_sequence = "RBG"
-        options.show_refresh_rate = 0
-        options.gpio_slowdown = 1
-        options.disable_hardware_pulsing = True
+        options.led_rgb_sequence = "RGB"
+        options.led_show_refresh = 0
+        options.led_slowdown_gpio = 1
+        options.led_no_hardware_pulse = True
 
-        self.matrix = RGBMatrix(options = options)
+        matrix = RGBMatrix(options = options)
+        matrix.Clear()
 
         white = graphics.Color(255, 255, 255)
         gray = graphics.Color(127, 127, 127)
@@ -113,11 +115,8 @@ class scoreboard(object):
         yellow = graphics.Color(127, 127,   0)
         red = graphics.Color(255,   0,   0)
         blue = graphics.Color(  0,   0, 255)
-        magenta = graphics.Color(127, 0, 127)
-        cyan = graphics.Color(0, 127, 127)
 
-        
-        offscreen_canvas = self.matrix.CreateFrameCanvas()
+
         font = graphics.Font()
 
         #main_dir = os.getcwd()
@@ -125,15 +124,11 @@ class scoreboard(object):
 
         width = 128
         height = 64
-        font_medium = graphics.Font()
-        font_medium.LoadFont("/home/pi/rpi-rgb-led-matrix/fonts/7x13.bdf")
-        font_small = graphics.Font()
-        font_small.LoadFont("/home/pi/rpi-rgb-led-matrix/fonts/5x8.bdf")
-        font_big = graphics.Font() 
-        font_big.LoadFont("/home/pi/rpi-rgb-led-matrix/fonts/9x15.bdf")
+        font_medium = font.LoadFont("/home/pi/rpi-rgb-led-matrix/fonts/7x13.bdf")
+        font_small = font.LoadFont("/home/pi/rpi-rgb-led-matrix/fonts/5x8.bdf")
+        font_big = font.LoadFont("/home/pi/rpi-rgb-led-matrix/fonts/9x15.bdf")
 
-        fontYoffset = 10
-        x_offset = -80
+        fontYoffset = -2  # Scoot up a couple lines so descenders aren't cropped
 
         old_score = 0
         new_score = 0
@@ -145,7 +140,7 @@ class scoreboard(object):
         away_team = ""
         live_stats_link = ""
         x = 0
-        y = 9
+        y = 0
         home_score_color = ""
         away_score_color = ""
         do_once = 1
@@ -237,7 +232,7 @@ class scoreboard(object):
 
 
                         # clear the buffer
-                            self.matrix.Clear()
+                            matrix.Clear()
 
                             # reset x and y
                             x = 0
@@ -296,23 +291,9 @@ class scoreboard(object):
                                 old_score = new_score
 
                             if current_period == 0:
-                               self.matrix.Clear()
-                               y = 9
-                               x_offset = x_offset + 1
-                               if x_offset > 63:
-                                   x_offset = -80
-                               graphics.DrawText(offscreen_canvas, font_medium, x + x_offset, y, blue, "GAME TODAY!")
-                               y += fontYoffset
-                               graphics.DrawText(offscreen_canvas, font_medium, x + x_offset, y, green, "GAME TODAY!")
-                               y += fontYoffset
-                               graphics.DrawText(offscreen_canvas, font_medium, x + x_offset, y, red, "GAME TODAY!")
-                               y += fontYoffset
-                               graphics.DrawText(offscreen_canvas, font_medium, x + x_offset, y, yellow, "GAME TODAY!")
-                               y += fontYoffset
-                               graphics.DrawText(offscreen_canvas, font_medium, x + x_offset, y, magenta, "GAME TODAY!")
-                               y += fontYoffset
-                               graphics.DrawText(offscreen_canvas, font_medium, x + x_offset, y, cyan, "GAME TODAY!")
-                               offscreen_canvas = self.matrix.SwapOnVSync(offscreen_canvas)
+                               print("gameday!")
+                               matrix.Clear()
+                               graphics.DrawText(matrix, font_medium, 0, 0, gray, "GAME TODAY!")
 
                         else:
                             print("Game Over!")

@@ -47,7 +47,8 @@ def fetch_live_stats(link):
         try:
             time_remaining = stuff['liveData']['linescore']['currentPeriodTimeRemaining']
         except KeyError:
-	    time_remaining = "00:00"
+            time_remaining = "00:00"
+
         return current_period, home_sog, away_sog, home_powerplay, away_powerplay, time_remaining
     except requests.exceptions.RequestException:
         print("Error encountered getting live stats")
