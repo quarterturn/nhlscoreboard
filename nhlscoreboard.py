@@ -132,8 +132,8 @@ class scoreboard(object):
         font_big = graphics.Font() 
         font_big.LoadFont("/home/pi/rpi-rgb-led-matrix/fonts/9x15.bdf")
 
-        fontYoffset = 10
-        x_offset = -80
+        fontYoffset = 8
+        x_offset = -64
 
         old_score = 0
         new_score = 0
@@ -297,21 +297,21 @@ class scoreboard(object):
 
                             if current_period == 0:
                                self.matrix.Clear()
-                               y = 9
+                               y = 6
                                x_offset = x_offset + 1
                                if x_offset > 63:
-                                   x_offset = -80
-                               graphics.DrawText(offscreen_canvas, font_medium, x + x_offset, y, blue, "GAME TODAY!")
+                                   x_offset = -64
+                               graphics.DrawText(offscreen_canvas, font_small, x + x_offset, y, blue, "GAME TODAY!")
                                y += fontYoffset
-                               graphics.DrawText(offscreen_canvas, font_medium, x + x_offset, y, green, "GAME TODAY!")
+                               graphics.DrawText(offscreen_canvas, font_small, x + x_offset, y, green, "GAME TODAY!")
                                y += fontYoffset
-                               graphics.DrawText(offscreen_canvas, font_medium, x + x_offset, y, red, "GAME TODAY!")
+                               graphics.DrawText(offscreen_canvas, font_small, x + x_offset, y, red, "GAME TODAY!")
                                y += fontYoffset
-                               graphics.DrawText(offscreen_canvas, font_medium, x + x_offset, y, yellow, "GAME TODAY!")
+                               graphics.DrawText(offscreen_canvas, font_small, x + x_offset, y, yellow, "GAME TODAY!")
                                y += fontYoffset
-                               graphics.DrawText(offscreen_canvas, font_medium, x + x_offset, y, magenta, "GAME TODAY!")
+                               graphics.DrawText(offscreen_canvas, font_small, x + x_offset, y, magenta, "GAME TODAY!")
                                y += fontYoffset
-                               graphics.DrawText(offscreen_canvas, font_medium, x + x_offset, y, cyan, "GAME TODAY!")
+                               graphics.DrawText(offscreen_canvas, font_small, x + x_offset, y, cyan, "GAME TODAY!")
                                offscreen_canvas = self.matrix.SwapOnVSync(offscreen_canvas)
 
                         else:
