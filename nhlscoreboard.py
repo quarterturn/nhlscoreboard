@@ -115,6 +115,7 @@ class scoreboard(object):
         blue = graphics.Color(  0,   0, 255)
         magenta = graphics.Color(127, 0, 127)
         cyan = graphics.Color(0, 127, 127)
+        dim = graphics.Color(10, 10, 10)
 
         
         offscreen_canvas = self.matrix.CreateFrameCanvas()
@@ -317,14 +318,15 @@ class scoreboard(object):
                         else:
                             print("Game Over!")
                             old_score = 0 # Reset for new game
+                            self.matrix.Clear()
                             do_once = 1
-                            sleep("day")  # sleep till tomorrow
+                            self.sleep("day")  # sleep till tomorrow
                     else:
                         print("No Game Today!")
-                        sleep("day")  # sleep till tomorrow
+                        self.sleep("day")  # sleep till tomorrow
                 else:
                     print("OFF SEASON!")
-                    sleep("season")  # sleep till next season
+                    self.sleep("season")  # sleep till next season
 
         except KeyboardInterrupt:
             print("\nCtrl-C pressed")
