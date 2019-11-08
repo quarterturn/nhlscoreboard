@@ -1,5 +1,6 @@
 # nhlscoreboard
 
+# NOTE this repo is still in development. The basic code is ready but I have not finalized how the display is going to look. Stay tuned!
 
 ## Overview
 
