@@ -109,10 +109,10 @@ class scoreboard(object):
 
         white = graphics.Color(255, 255, 255)
         gray = graphics.Color(127, 127, 127)
-        green = graphics.Color(  0, 255,   0)
-        yellow = graphics.Color(127, 127,   0)
-        red = graphics.Color(255,   0,   0)
-        blue = graphics.Color(  0,   0, 255)
+        green = graphics.Color(0, 150, 0)
+        yellow = graphics.Color(127, 127, 0)
+        red = graphics.Color(150, 0, 0)
+        blue = graphics.Color(0, 0, 150)
         magenta = graphics.Color(127, 0, 127)
         cyan = graphics.Color(0, 127, 127)
         dim = graphics.Color(10, 10, 10)
@@ -129,11 +129,11 @@ class scoreboard(object):
         font_medium = graphics.Font()
         font_medium.LoadFont("/home/pi/rpi-rgb-led-matrix/fonts/7x13.bdf")
         font_small = graphics.Font()
-        font_small.LoadFont("/home/pi/rpi-rgb-led-matrix/fonts/5x8.bdf")
+        font_small.LoadFont("/home/pi/rpi-rgb-led-matrix/fonts/6x9.bdf")
         font_big = graphics.Font() 
         font_big.LoadFont("/home/pi/rpi-rgb-led-matrix/fonts/9x15.bdf")
 
-        fontYoffset = 8
+        fontYoffset = 9
         x_offset = -64
 
         old_score = 0
@@ -146,7 +146,7 @@ class scoreboard(object):
         away_team = ""
         live_stats_link = ""
         x = 0
-        y = 9
+        y =10 
         home_score_color = ""
         away_score_color = ""
         do_once = 1
@@ -174,7 +174,6 @@ class scoreboard(object):
                         game_end = nhl.check_game_end(team_id)
 
                         if not game_end:
-
                             # Check score online and save score
                             new_score = nhl.fetch_score(team_id)
 
@@ -193,127 +192,121 @@ class scoreboard(object):
                                 home_roster, away_roster = nhl.fetch_rosters(live_stats_link)
                                 do_once = 0
 
-                            # get the players on ice
-                            home_on_ice, away_on_ice = nhl.players_on_ice(live_stats_link)
-                            # build a list like so for each team
-                            # jersey_number lastname
-                            home_ice_list = []
-                            away_ice_list = []
-                            for the_id in home_on_ice:
-                                jersey_number = (home_roster['ID'+str(the_id)]['jerseyNumber']).encode("ascii")
-                                if (int(jersey_number)) < 10:
-                                    jersey_number = ' ' + jersey_number
-                                # hopefully all the names are first last
-                                # if not we will have to count the list from split and take the last one
-                                last_name = (((home_roster['ID'+str(the_id)]['person']['fullName']).split(' ', 1))[1]).encode("ascii")
-                                home_ice_list.append(jersey_number+' '+last_name.upper())
-                            for the_id in away_on_ice:
-                                jersey_number = (away_roster['ID'+str(the_id)]['jerseyNumber']).encode("ascii")
-                                if (int(jersey_number)) < 10:
-                                    jersey_number = '  ' + jersey_number
-                                last_name = (((away_roster['ID'+str(the_id)]['person']['fullName']).split(' ', 1))[1]).encode("ascii")
-                                away_ice_list.append(jersey_number+' '+last_name.upper())
+                            if current_period > 0:
+    
+                                # get the players on ice
+                                home_on_ice, away_on_ice = nhl.players_on_ice(live_stats_link)
+                                # build a list like so for each team
+                                # jersey_number lastname
+                                home_ice_list = []
+                                away_ice_list = []
+                                home_goalie_id, away_goalie_id = nhl.fetch_goalies(live_stats_link)
+                                for the_id in home_on_ice:
+                                    jersey_number = (home_roster['ID'+str(the_id)]['jerseyNumber']).encode("ascii")
+                                    if int(jersey_number.decode("utf-8")) < 10:
+                                        jersey_number = ' ' + jersey_number.decode("utf-8")
+                                    else:
+                                        jersey_number = jersey_number.decode("utf-8")
+                                    last_name = (((home_roster['ID'+str(the_id)]['person']['fullName']).split(' ', 1))[1]).encode("ascii")
+                                    temp_thing = jersey_number + ' ' + (last_name[0:7].upper()).decode("utf-8")
+                                    home_ice_list.append(temp_thing)
+                                for the_id in away_on_ice:
+                                    jersey_number = (away_roster['ID'+str(the_id)]['jerseyNumber']).encode("ascii")
+                                    if int(jersey_number.decode("utf-8")) < 10:
+                                        jersey_number = '  ' + jersey_number.decode("utf-8")
+                                    else:
+                                        jersey_number = jersey_number.decode("utf-8")
+                                    last_name = (((away_roster['ID'+str(the_id)]['person']['fullName']).split(' ', 1))[1]).encode("ascii")
+                                    temp_thing = jersey_number + ' ' + (last_name[0:7].upper()).decode("utf-8")
+                                    away_ice_list.append(temp_thing)
+    
+                                # determine score colors
+                                if home_score > away_score:
+                                    home_score_color = red
+                                    away_score_color = green
+                                elif away_score > home_score:
+                                    home_score_color = green
+                                    away_score_color = red
+                                else:
+                                    home_score_color = green
+                                    away_score_color = green
+    
+                                # determine team colors
+                                if home_powerplay == 1:
+                                    home_team_color = yellow
+                                else:
+                                    home_team_color = gray
+                                if away_powerplay == 1:
+                                    away_team_color = yellow
+                                else:
+                                    away_team_color = gray 
+    
+    
+                                # reset x and y
+                                x = 0
+                                y = 0
+        
+                                # clear the offscreen canvas
+                                offscreen_canvas.Clear() 
 
-
-                            # determine score colors
-                            if home_score > away_score:
-                                home_score_color = (200,   0,   0)
-                                away_score_color = (  0, 200,   0)
-                            elif away_score > home_score:
-                                home_score_color = (  0, 200,   0)
-                                away_score_color = (200,   0,   0)
-                            else:
-                                home_score_color = green
-                                away_score_color = green
-
-                            # determine team colors
-                            if home_powerplay == 1:
-                                home_team_color = (127, 127, 0)
-                            else:
-                                home_team_color = (127, 127, 127)
-                            if away_powerplay == 1:
-                                away_team_color = (127, 127, 0)
-                            else:
-                                away_team_color = (127, 127, 127)
-
-
-                        # clear the buffer
-                            self.matrix.Clear()
-
-                            # reset x and y
-                            x = 0
-                            y = 0
-
-    #                   # teams
-    #                   graphics.DrawText((x, y + fontYoffset),
-    #                                             teams[away_team], font=font_medium, fill=away_team_color)
-    #                        # x += font.getsize(teams[home_team])[0]
-    #                        x = 40
-    #                   graphics.DrawText((x, y + fontYoffset),
-    #                                             teams[home_team], font=font_medium, fill=home_team_color)
-    #                        x = 0
-    #                        y += 11
-    #
-    #                        # scores
-    #                        x += 8
-    #                        graphics.DrawText((x, y + fontYoffset),
-    #                                                  str(away_score), font=font_big, fill=away_score_color)
-    #                        x = 40
-    #                        x += 8
-    #                        graphics.DrawText((x, y + fontYoffset),
-    #                                                  str(home_score), font=font_big, fill=home_score_color)
-    #                        # shots on goal
-    #                        x = 4
-    #                        y = 24
-    #                        graphics.DrawText((x, y + fontYoffset), str(away_sog), font=font_small, fill=gray)
-    #                        x = 40
-    #                        x += 8
-    #                        graphics.DrawText((x, y + fontYoffset), str(home_sog), font=font_small, fill=gray)
-    #                        x -= 28
-    #                        # time remaining in period
-    #                        graphics.DrawText((x, y + fontYoffset), str(time_remaining), font=font_small, fill=yellow)
-    #
-    #                        # period
-    #                        y = 15
-    #                        x = 28
-    #                        graphics.DrawText((x, y + fontYoffset), str(current_period), font=font_small, fill=yellow)
-                            if int(team_id) == home_team:
+                                # teams
+                                # home on left
+                                # 3-letter team, score, sog
+                                graphics.DrawText(offscreen_canvas, font_small, 0, y + fontYoffset, gray, teams[home_team])
+                                graphics.DrawText(offscreen_canvas, font_small, 28, y + fontYoffset, home_team_color, str(home_score))
+                                graphics.DrawText(offscreen_canvas, font_small, 49, y + fontYoffset, gray, str(home_sog))
+                                y += 9
+                                # players on ice
                                 for line in home_ice_list:
-                                    graphics.DrawText((x, y + fontYoffset), line, font=font_small, fill=gray)
-                                    y += 7
-                            else:
+                                    graphics.DrawText(offscreen_canvas, font_small, 0, y + fontYoffset, gray, line)
+                                    y += 9
+        
+                                # away on left
+                                y = 0
+                                # 3-letter team, score, sog
+                                graphics.DrawText(offscreen_canvas, font_small, 64, y + fontYoffset, gray, teams[away_team])
+                                graphics.DrawText(offscreen_canvas, font_small, 92, y + fontYoffset, away_team_color, str(away_score))
+                                graphics.DrawText(offscreen_canvas, font_small, 113, y + fontYoffset, gray, str(away_sog))
+                                y += 9
+                                # players on ice
                                 for line in away_ice_list:
-                                    graphics.DrawText((x, y + fontYoffset), line, font=font_small, fill=gray)
-                                    y += 7
-
-
-                            # If score change...
-                            if new_score != old_score:
-                                time.sleep(delay)
-                                if new_score > old_score:
-                                    # save new score
-                                    print("GOAL!")
-                                    # activate_goal_light()
-                                old_score = new_score
+                                    graphics.DrawText(offscreen_canvas, font_small, 64, y + fontYoffset, gray, line)
+                                    y += 9
+        
+                                # blit it to the screen  
+                                offscreen_canvas = self.matrix.SwapOnVSync(offscreen_canvas)
+    
+                                # If score change...
+                                if new_score != old_score:
+                                    time.sleep(delay)
+                                    if new_score > old_score:
+                                        # save new score
+                                        print("GOAL!")
+                                        # activate_goal_light()
+                                    old_score = new_score
 
                             if current_period == 0:
-                               self.matrix.Clear()
-                               y = 6
+                               offscreen_canvas.Clear()
+                               y = 7
                                x_offset = x_offset + 1
                                if x_offset > 63:
                                    x_offset = -64
                                graphics.DrawText(offscreen_canvas, font_small, x + x_offset, y, blue, "GAME TODAY!")
                                y += fontYoffset
-                               graphics.DrawText(offscreen_canvas, font_small, x + x_offset, y, green, "GAME TODAY!")
+                               graphics.DrawText(offscreen_canvas, font_small, x + 10 + x_offset, y, green, "GAME TODAY!")
                                y += fontYoffset
-                               graphics.DrawText(offscreen_canvas, font_small, x + x_offset, y, red, "GAME TODAY!")
+                               graphics.DrawText(offscreen_canvas, font_small, x + 20 + x_offset, y, red, "GAME TODAY!")
                                y += fontYoffset
-                               graphics.DrawText(offscreen_canvas, font_small, x + x_offset, y, yellow, "GAME TODAY!")
+                               graphics.DrawText(offscreen_canvas, font_small, x + 30 + x_offset, y, yellow, "GAME TODAY!")
                                y += fontYoffset
-                               graphics.DrawText(offscreen_canvas, font_small, x + x_offset, y, magenta, "GAME TODAY!")
+                               graphics.DrawText(offscreen_canvas, font_small, x + 40 + x_offset, y, magenta, "GAME TODAY!")
                                y += fontYoffset
-                               graphics.DrawText(offscreen_canvas, font_small, x + x_offset, y, cyan, "GAME TODAY!")
+                               graphics.DrawText(offscreen_canvas, font_small, x + 50 + x_offset, y, cyan, "GAME TODAY!")
+                               y += fontYoffset
+                               game_start_time = nhl.fetch_game_start_time(live_stats_link)
+                               graphics.DrawText(offscreen_canvas, font_small, 0, y, gray, "GAMETIME: " + game_start_time)
                                offscreen_canvas = self.matrix.SwapOnVSync(offscreen_canvas)
+                               
 
                         else:
                             print("Game Over!")

@@ -1,5 +1,6 @@
 import requests
-import datetime
+from datetime import datetime
+from dateutil import tz
 
 NHL_API_URL = "http://statsapi.web.nhl.com/api/v1/"
 NHL_API_URL_BASE = "http://statsapi.web.nhl.com"
@@ -52,6 +53,22 @@ def fetch_live_stats(link):
         return current_period, home_sog, away_sog, home_powerplay, away_powerplay, time_remaining
     except requests.exceptions.RequestException:
         print("Error encountered getting live stats")
+
+def fetch_game_start_time(link):
+    """ Function to get the start time of todays game """
+    url = '{0}{1}'.format(NHL_API_URL_BASE, link)
+    response = requests.get(url)
+    stuff = response.json()
+    try:
+        date_and_time = stuff['gameData']['datetime']['dateTime']
+        gametime = datetime.strptime(date_and_time, '%Y-%d-%mT%H:%M:%SZ')
+        from_zone = tz.gettz('UTC')
+        to_zone = tz.tzlocal()
+        gametime = gametime.replace(tzinfo=from_zone)
+        gametime = gametime.astimezone(to_zone)
+        return gametime.strftime("%X")
+    except requests.exceptions.RequestException:
+        print("Error encountered getting live stats")
          
 def fetch_rosters(link):
     """ Function to get the home and away team roster """
@@ -62,6 +79,18 @@ def fetch_rosters(link):
         home_roster = stuff['liveData']['boxscore']['teams']['home']['players']
         away_roster = stuff['liveData']['boxscore']['teams']['away']['players']
         return home_roster, away_roster
+    except requests.exceptions.RequestException:
+        print("Error encountered getting live stats")
+
+def fetch_goalies(link):
+    """ Function to get the home and away goalies """
+    url = '{0}{1}'.format(NHL_API_URL_BASE, link)
+    response = requests.get(url)
+    stuff = response.json()
+    try:
+        home_goalie = stuff['liveData']['boxscore']['teams']['home']['goalies']
+        away_goalie = stuff['liveData']['boxscore']['teams']['away']['goalies']
+        return home_goalie, away_goalie
     except requests.exceptions.RequestException:
         print("Error encountered getting live stats")
 
@@ -80,9 +109,6 @@ def players_on_ice(link):
 def fetch_game(team_id):
     """ Function to get the scores of the game depending on the chosen team.
     Inputs the team ID and returns the score found on web. """
-
-    # Get current time
-    now = datetime.datetime.now()
 
     # Set URL depending on team selected
     url = '{0}schedule?teamId={1}'.format(NHL_API_URL, team_id)
@@ -104,9 +130,6 @@ def fetch_score(team_id):
     """ Function to get the score of the game depending on the chosen team.
     Inputs the team ID and returns the score found on web. """
 
-    # Get current time
-    now = datetime.datetime.now()
-
     # Set URL depending on team selected
     url = '{0}schedule?teamId={1}'.format(NHL_API_URL, team_id)
     # Avoid request errors (might still not catch errors)
@@ -119,7 +142,6 @@ def fetch_score(team_id):
             score = int(score['dates'][0]['games'][0]['teams']['away']['score'])
 
         # Print score for test
-        #print("Score: {0} Time: {1}:{2}:{3}".format(score, now.hour, now.minute, now.second))
         return score
     except requests.exceptions.RequestException:
         print("Error encountered, returning 0 for score")
@@ -129,7 +151,7 @@ def fetch_score(team_id):
 def check_season():
     """ Function to check if in season. Returns True if in season, False in off season. """
     # Get current time
-    now = datetime.datetime.now()
+    now = datetime.now()
     if now.month in (7, 8):
         return False
     else:
