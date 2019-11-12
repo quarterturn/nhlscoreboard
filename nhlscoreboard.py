@@ -4,8 +4,8 @@ import os
 import requests
 from lib import nhl
 import os
-import time
 from rgbmatrix import RGBMatrix, RGBMatrixOptions, graphics
+import random
 
 class scoreboard(object):
     def __init__(self):
@@ -136,12 +136,12 @@ class scoreboard(object):
         fontYoffset = 9
         x_offset = -64
 
-        old_score = 0
-        new_score = 0
         gameday = False
         season = False
         home_score = 0
+        home_score_old = 0
         away_score = 0
+        awaay_score_old = 0
         home_team = ""
         away_team = ""
         live_stats_link = ""
@@ -150,6 +150,9 @@ class scoreboard(object):
         home_score_color = ""
         away_score_color = ""
         do_once = 1
+        ignore_first_score_change = 1
+
+        random.seed()
 
 
         teams = {1 : "NJD", 2 : "NYI", 3 : "NYR", 4 : "PHI", 5 : "PIT", 6 : "BOS", 7 : "BUF", 8 : "MTL", 9 : "OTT", 10 : "TOR", 12 : "CAR", 13 : "FLA", 14 : "TBL", 15 : "WSH", 16 : "CHI", 17 : "DET", 18 : "NSH", 19 : "STL", 20 : "CGY", 21 : "COL", 22 : "EDM", 23 : "VAN", 24 : "ANA", 25 : "DAL", 26 : "LAK", 28 : "SJS", 29 : "CBJ", 30 : "MIN", 52 : "WPG", 53 : "ARI", 54 : "VGK"}
@@ -174,16 +177,11 @@ class scoreboard(object):
                         game_end = nhl.check_game_end(team_id)
 
                         if not game_end:
-                            # Check score online and save score
-                            new_score = nhl.fetch_score(team_id)
-
-                            # new function fetch_game(team_id)
-                            # returns home_score, home_team, away_score, away_team
                             try:
+                                # get score, teams, and live stats link
                                 home_score, home_team, away_score, away_team, live_stats_link = nhl.fetch_game(team_id)
                             except TypeError:
                                 continue
-                            #print("Home team: {0} Home score: {1} Away team: {2} Away score: {3}".format( teams[home_team], home_score, teams[away_team], away_score))
 
                             # get stats from the game
                             current_period, home_sog, away_sog, home_powerplay, away_powerplay, time_remaining = nhl.fetch_live_stats(live_stats_link)
@@ -277,19 +275,40 @@ class scoreboard(object):
                                 offscreen_canvas = self.matrix.SwapOnVSync(offscreen_canvas)
     
                                 # If score change...
-                                if new_score != old_score:
+                                if home_score != home_score_old:
                                     time.sleep(delay)
-                                    if new_score > old_score:
-                                        # save new score
-                                        print("GOAL!")
-                                        # activate_goal_light()
-                                    old_score = new_score
+                                    if (home_score > home_score_old) and (ignore_first_score_change == 0):
+                                        home_score_old = home_score
+                                        choice = random.randint(1,3)    
+                                        if home_team == team_id:
+                                            os.system("/home/pi/rpi-rgb-led-matrix/utils/video-viewer --led-rows=32 --led-cols=64 --led-chain=4 --led-pixel-mapper=\"U-mapper\" --led-gpio-mapping=adafruit-hat-pwm --led-slowdown-gpio=1 /home/pi/nhlscoreboard/canes-goal-animations/" + str(choice) + ".gif")
+                                        else:
+                                            os.system("/home/pi/rpi-rgb-led-matrix/utils/video-viewer --led-rows=32 --led-cols=64 --led-chain=4 --led-pixel-mapper=\"U-mapper\" --led-gpio-mapping=adafruit-hat-pwm --led-slowdown-gpio=1 /home/pi/nhlscoreboard/opposing-goal-animations/" + str(choice) + ".gif")
+                                else:
+                                    ignore_first_score_change = 0
+                                    home_score_old = home_score
+                                    away_score_old = away_score
+
+                                # If score change...
+                                if away_score != away_score_old:
+                                    time.sleep(delay)
+                                    if (away_score > away_score_old) and (ignore_first_score_change == 0):
+                                        away_score_old = away_score
+                                        choice = random.randint(1,3)    
+                                        if away_team == team_id:
+                                            os.system("/away/pi/rpi-rgb-led-matrix/utils/video-viewer --led-rows=32 --led-cols=64 --led-chain=4 --led-pixel-mapper=\"U-mapper\" --led-gpio-mapping=adafruit-hat-pwm --led-slowdown-gpio=1 /away/pi/nhlscoreboard/canes-goal-animations/" + str(choice) + ".gif")
+                                        else:
+                                            os.system("/away/pi/rpi-rgb-led-matrix/utils/video-viewer --led-rows=32 --led-cols=64 --led-chain=4 --led-pixel-mapper=\"U-mapper\" --led-gpio-mapping=adafruit-hat-pwm --led-slowdown-gpio=1 /away/pi/nhlscoreboard/opposing-goal-animations/" + str(choice) + ".gif")
+                                else:
+                                    ignore_first_score_change = 0
+                                    away_score_old = away_score
+                                    home_score_old = home_score
 
                             if current_period == 0:
                                offscreen_canvas.Clear()
                                y = 7
                                x_offset = x_offset + 1
-                               if x_offset > 63:
+                               if x_offset > 128:
                                    x_offset = -64
                                graphics.DrawText(offscreen_canvas, font_small, x + x_offset, y, blue, "GAME TODAY!")
                                y += fontYoffset
@@ -309,9 +328,9 @@ class scoreboard(object):
                                
 
                         else:
-                            print("Game Over!")
                             old_score = 0 # Reset for new game
                             self.matrix.Clear()
+                            offscreen_canvas.Clear()
                             do_once = 1
                             self.sleep("day")  # sleep till tomorrow
                     else:
