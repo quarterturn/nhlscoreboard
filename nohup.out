@@ -1,0 +1,23 @@
+Press CTRL-C to stop sample
+No Game Today!
+Traceback (most recent call last):
+  File "nhlscoreboard.py", line 351, in <module>
+    my_scoreboard.run()
+  File "nhlscoreboard.py", line 325, in run
+    game_start_time = nhl.fetch_game_start_time(live_stats_link)
+  File "/home/pi/nhlscoreboard/lib/nhl.py", line 64, in fetch_game_start_time
+    gametime = datetime.strptime(date_and_time, '%Y-%d-%mT%H:%M:%SZ')
+  File "/usr/lib/python3.7/_strptime.py", line 577, in _strptime_datetime
+    tt, fraction, gmtoff_fraction = _strptime(data_string, format)
+  File "/usr/lib/python3.7/_strptime.py", line 359, in _strptime
+    (data_string, format))
+ValueError: time data '2019-11-22T00:00:00Z' does not match format '%Y-%d-%mT%H:%M:%SZ'
+Press CTRL-C to stop sample
+Traceback (most recent call last):
+  File "nhlscoreboard.py", line 353, in <module>
+    my_scoreboard.run()
+  File "nhlscoreboard.py", line 203, in run
+    jersey_number = (home_roster['ID'+str(the_id)]['jerseyNumber']).encode("ascii")
+KeyError: 'ID8475852'
+Must run as root to be able to access /dev/mem
+Prepend 'sudo' to the command

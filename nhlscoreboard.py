@@ -141,7 +141,7 @@ class scoreboard(object):
         home_score = 0
         home_score_old = 0
         away_score = 0
-        awaay_score_old = 0
+        away_score_old = 0
         home_team = ""
         away_team = ""
         live_stats_link = ""
@@ -162,7 +162,7 @@ class scoreboard(object):
 
             while (True):
 
-                time.sleep(1)
+                time.sleep(5)
 
                 # check if in season
                 season = nhl.check_season()
@@ -202,7 +202,7 @@ class scoreboard(object):
                                 for the_id in home_on_ice:
                                     jersey_number = (home_roster['ID'+str(the_id)]['jerseyNumber']).encode("ascii")
                                     if int(jersey_number.decode("utf-8")) < 10:
-                                        jersey_number = ' ' + jersey_number.decode("utf-8")
+                                        jersey_number = jersey_number.decode("utf-8") + ' '
                                     else:
                                         jersey_number = jersey_number.decode("utf-8")
                                     last_name = (((home_roster['ID'+str(the_id)]['person']['fullName']).split(' ', 1))[1]).encode("ascii")
@@ -211,7 +211,7 @@ class scoreboard(object):
                                 for the_id in away_on_ice:
                                     jersey_number = (away_roster['ID'+str(the_id)]['jerseyNumber']).encode("ascii")
                                     if int(jersey_number.decode("utf-8")) < 10:
-                                        jersey_number = '  ' + jersey_number.decode("utf-8")
+                                        jersey_number = jersey_number.decode("utf-8") + ' '
                                     else:
                                         jersey_number = jersey_number.decode("utf-8")
                                     last_name = (((away_roster['ID'+str(the_id)]['person']['fullName']).split(' ', 1))[1]).encode("ascii")
@@ -250,8 +250,8 @@ class scoreboard(object):
                                 # teams
                                 # home on left
                                 # 3-letter team, score, sog
-                                graphics.DrawText(offscreen_canvas, font_small, 0, y + fontYoffset, gray, teams[home_team])
-                                graphics.DrawText(offscreen_canvas, font_small, 28, y + fontYoffset, home_team_color, str(home_score))
+                                graphics.DrawText(offscreen_canvas, font_small, 0, y + fontYoffset, home_team_color, teams[home_team])
+                                graphics.DrawText(offscreen_canvas, font_small, 28, y + fontYoffset, home_score_color, str(home_score))
                                 graphics.DrawText(offscreen_canvas, font_small, 49, y + fontYoffset, gray, str(home_sog))
                                 y += 9
                                 # players on ice
@@ -262,8 +262,8 @@ class scoreboard(object):
                                 # away on left
                                 y = 0
                                 # 3-letter team, score, sog
-                                graphics.DrawText(offscreen_canvas, font_small, 64, y + fontYoffset, gray, teams[away_team])
-                                graphics.DrawText(offscreen_canvas, font_small, 92, y + fontYoffset, away_team_color, str(away_score))
+                                graphics.DrawText(offscreen_canvas, font_small, 64, y + fontYoffset, away_team_color, teams[away_team])
+                                graphics.DrawText(offscreen_canvas, font_small, 92, y + fontYoffset, away_score_color, str(away_score))
                                 graphics.DrawText(offscreen_canvas, font_small, 113, y + fontYoffset, gray, str(away_sog))
                                 y += 9
                                 # players on ice
@@ -277,7 +277,7 @@ class scoreboard(object):
                                 # If score change...
                                 if home_score != home_score_old:
                                     time.sleep(delay)
-                                    if (home_score > home_score_old) and (ignore_first_score_change == 0):
+                                    if (home_score > home_score_old) and (ignore_first_score_change != 0):
                                         home_score_old = home_score
                                         choice = random.randint(1,3)    
                                         if home_team == team_id:
@@ -292,13 +292,13 @@ class scoreboard(object):
                                 # If score change...
                                 if away_score != away_score_old:
                                     time.sleep(delay)
-                                    if (away_score > away_score_old) and (ignore_first_score_change == 0):
+                                    if (away_score > away_score_old) and (ignore_first_score_change != 0):
                                         away_score_old = away_score
                                         choice = random.randint(1,3)    
                                         if away_team == team_id:
-                                            os.system("/away/pi/rpi-rgb-led-matrix/utils/video-viewer --led-rows=32 --led-cols=64 --led-chain=4 --led-pixel-mapper=\"U-mapper\" --led-gpio-mapping=adafruit-hat-pwm --led-slowdown-gpio=1 /away/pi/nhlscoreboard/canes-goal-animations/" + str(choice) + ".gif")
+                                            os.system("/home/pi/rpi-rgb-led-matrix/utils/video-viewer --led-rows=32 --led-cols=64 --led-chain=4 --led-pixel-mapper=\"U-mapper\" --led-gpio-mapping=adafruit-hat-pwm --led-slowdown-gpio=1 /away/pi/nhlscoreboard/canes-goal-animations/" + str(choice) + ".gif")
                                         else:
-                                            os.system("/away/pi/rpi-rgb-led-matrix/utils/video-viewer --led-rows=32 --led-cols=64 --led-chain=4 --led-pixel-mapper=\"U-mapper\" --led-gpio-mapping=adafruit-hat-pwm --led-slowdown-gpio=1 /away/pi/nhlscoreboard/opposing-goal-animations/" + str(choice) + ".gif")
+                                            os.system("/home/pi/rpi-rgb-led-matrix/utils/video-viewer --led-rows=32 --led-cols=64 --led-chain=4 --led-pixel-mapper=\"U-mapper\" --led-gpio-mapping=adafruit-hat-pwm --led-slowdown-gpio=1 /away/pi/nhlscoreboard/opposing-goal-animations/" + str(choice) + ".gif")
                                 else:
                                     ignore_first_score_change = 0
                                     away_score_old = away_score
@@ -320,7 +320,9 @@ class scoreboard(object):
                                y += fontYoffset
                                graphics.DrawText(offscreen_canvas, font_small, x + 40 + x_offset, y, magenta, "GAME TODAY!")
                                y += fontYoffset
-                               graphics.DrawText(offscreen_canvas, font_small, x + 50 + x_offset, y, cyan, "GAME TODAY!")
+                               #graphics.DrawText(offscreen_canvas, font_small, x + 50 + x_offset, y, cyan, "GAME TODAY!")
+                               temptime = datetime.datetime.now()
+                               graphics.DrawText(offscreen_canvas, font_small, 0, y, gray, temptime.strftime("%m/%d/%y %H:%M")) 
                                y += fontYoffset
                                game_start_time = nhl.fetch_game_start_time(live_stats_link)
                                graphics.DrawText(offscreen_canvas, font_small, 0, y, gray, "GAMETIME: " + game_start_time)

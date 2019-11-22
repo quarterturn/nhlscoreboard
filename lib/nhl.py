@@ -61,12 +61,12 @@ def fetch_game_start_time(link):
     stuff = response.json()
     try:
         date_and_time = stuff['gameData']['datetime']['dateTime']
-        gametime = datetime.strptime(date_and_time, '%Y-%d-%mT%H:%M:%SZ')
+        gametime = datetime.strptime(date_and_time, '%Y-%m-%dT%H:%M:%SZ')
         from_zone = tz.gettz('UTC')
         to_zone = tz.tzlocal()
         gametime = gametime.replace(tzinfo=from_zone)
         gametime = gametime.astimezone(to_zone)
-        return gametime.strftime("%X")
+        return gametime.strftime("%H:%M")
     except requests.exceptions.RequestException:
         print("Error encountered getting live stats")
          
