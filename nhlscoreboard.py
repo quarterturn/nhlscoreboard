@@ -3,9 +3,9 @@ import time
 import os
 import requests
 from lib import nhl
-import os
 from rgbmatrix import RGBMatrix, RGBMatrixOptions, graphics
 import random
+from PIL import Image
 
 class scoreboard(object):
     def __init__(self):
@@ -103,8 +103,6 @@ class scoreboard(object):
         options.led_rgb_sequence = "RBG"
         options.show_refresh_rate = 0
         options.gpio_slowdown = 1
-        options.disable_hardware_pulsing = True
-
         self.matrix = RGBMatrix(options = options)
 
         white = graphics.Color(255, 255, 255)
@@ -153,10 +151,14 @@ class scoreboard(object):
         ignore_first_score_change = 1
 
         random.seed()
-
+        choice = 1
 
         teams = {1 : "NJD", 2 : "NYI", 3 : "NYR", 4 : "PHI", 5 : "PIT", 6 : "BOS", 7 : "BUF", 8 : "MTL", 9 : "OTT", 10 : "TOR", 12 : "CAR", 13 : "FLA", 14 : "TBL", 15 : "WSH", 16 : "CHI", 17 : "DET", 18 : "NSH", 19 : "STL", 20 : "CGY", 21 : "COL", 22 : "EDM", 23 : "VAN", 24 : "ANA", 25 : "DAL", 26 : "LAK", 28 : "SJS", 29 : "CBJ", 30 : "MIN", 52 : "WPG", 53 : "ARI", 54 : "VGK"}
         team_id, delay = self.setup_nhl()
+
+        #image = Image.open("/home/pi/nhlscoreboard/images/goal.png")
+        #self.matrix.SetImage(image.convert('RGB'))
+        #time.sleep(5)
 
         try:
 
@@ -277,13 +279,13 @@ class scoreboard(object):
                                 # If score change...
                                 if home_score != home_score_old:
                                     time.sleep(delay)
-                                    if (home_score > home_score_old) and (ignore_first_score_change != 0):
+                                    if (home_score > home_score_old) and (ignore_first_score_change == 0):
                                         home_score_old = home_score
                                         choice = random.randint(1,3)    
-                                        if home_team == team_id:
-                                            os.system("/home/pi/rpi-rgb-led-matrix/utils/video-viewer --led-rows=32 --led-cols=64 --led-chain=4 --led-pixel-mapper=\"U-mapper\" --led-gpio-mapping=adafruit-hat-pwm --led-slowdown-gpio=1 /home/pi/nhlscoreboard/canes-goal-animations/" + str(choice) + ".gif")
-                                        else:
-                                            os.system("/home/pi/rpi-rgb-led-matrix/utils/video-viewer --led-rows=32 --led-cols=64 --led-chain=4 --led-pixel-mapper=\"U-mapper\" --led-gpio-mapping=adafruit-hat-pwm --led-slowdown-gpio=1 /home/pi/nhlscoreboard/opposing-goal-animations/" + str(choice) + ".gif")
+                                        if home_team == "CAR":
+                                            image = Image.open("/home/pi/nhlscoreboard/images/goal.png")
+                                            self.matrix.SetImage(image.convert('RGB'))
+                                            time.sleep(5)
                                 else:
                                     ignore_first_score_change = 0
                                     home_score_old = home_score
@@ -292,13 +294,13 @@ class scoreboard(object):
                                 # If score change...
                                 if away_score != away_score_old:
                                     time.sleep(delay)
-                                    if (away_score > away_score_old) and (ignore_first_score_change != 0):
+                                    if (away_score > away_score_old) and (ignore_first_score_change == 0):
                                         away_score_old = away_score
                                         choice = random.randint(1,3)    
-                                        if away_team == team_id:
-                                            os.system("/home/pi/rpi-rgb-led-matrix/utils/video-viewer --led-rows=32 --led-cols=64 --led-chain=4 --led-pixel-mapper=\"U-mapper\" --led-gpio-mapping=adafruit-hat-pwm --led-slowdown-gpio=1 /away/pi/nhlscoreboard/canes-goal-animations/" + str(choice) + ".gif")
-                                        else:
-                                            os.system("/home/pi/rpi-rgb-led-matrix/utils/video-viewer --led-rows=32 --led-cols=64 --led-chain=4 --led-pixel-mapper=\"U-mapper\" --led-gpio-mapping=adafruit-hat-pwm --led-slowdown-gpio=1 /away/pi/nhlscoreboard/opposing-goal-animations/" + str(choice) + ".gif")
+                                        if away_team == "CAR":
+                                            image = Image.open("/home/pi/nhlscoreboard/images/goal.png")
+                                            self.matrix.SetImage(image.convert('RGB'))
+                                            time.sleep(5)
                                 else:
                                     ignore_first_score_change = 0
                                     away_score_old = away_score
