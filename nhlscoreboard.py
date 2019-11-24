@@ -131,7 +131,7 @@ class scoreboard(object):
         font_big = graphics.Font() 
         font_big.LoadFont("/home/pi/rpi-rgb-led-matrix/fonts/9x15.bdf")
 
-        fontYoffset = 9
+        fontYoffset = 6
         x_offset = -64
 
         gameday = False
@@ -148,7 +148,7 @@ class scoreboard(object):
         home_score_color = ""
         away_score_color = ""
         do_once = 1
-        ignore_first_score_change = 1
+        ignore_first_score_change = 0
 
         random.seed()
         choice = 1
@@ -202,7 +202,10 @@ class scoreboard(object):
                                 away_ice_list = []
                                 home_goalie_id, away_goalie_id = nhl.fetch_goalies(live_stats_link)
                                 for the_id in home_on_ice:
-                                    jersey_number = (home_roster['ID'+str(the_id)]['jerseyNumber']).encode("ascii")
+                                    try:
+                                        jersey_number = (home_roster['ID'+str(the_id)]['jerseyNumber']).encode("ascii")
+                                    except:
+                                        jersey_number = "0"
                                     if int(jersey_number.decode("utf-8")) < 10:
                                         jersey_number = jersey_number.decode("utf-8") + ' '
                                     else:
@@ -254,35 +257,37 @@ class scoreboard(object):
                                 # 3-letter team, score, sog
                                 graphics.DrawText(offscreen_canvas, font_small, 0, y + fontYoffset, home_team_color, teams[home_team])
                                 graphics.DrawText(offscreen_canvas, font_small, 28, y + fontYoffset, home_score_color, str(home_score))
-                                graphics.DrawText(offscreen_canvas, font_small, 49, y + fontYoffset, gray, str(home_sog))
-                                y += 9
+                                graphics.DrawText(offscreen_canvas, font_small, 49, y + fontYoffset, yellow, str(home_sog))
+                                y += 8
                                 # players on ice
                                 for line in home_ice_list:
                                     graphics.DrawText(offscreen_canvas, font_small, 0, y + fontYoffset, gray, line)
-                                    y += 9
+                                    y += 8
         
                                 # away on left
                                 y = 0
                                 # 3-letter team, score, sog
                                 graphics.DrawText(offscreen_canvas, font_small, 64, y + fontYoffset, away_team_color, teams[away_team])
                                 graphics.DrawText(offscreen_canvas, font_small, 92, y + fontYoffset, away_score_color, str(away_score))
-                                graphics.DrawText(offscreen_canvas, font_small, 113, y + fontYoffset, gray, str(away_sog))
-                                y += 9
+                                graphics.DrawText(offscreen_canvas, font_small, 113, y + fontYoffset, yellow, str(away_sog))
+                                y += 8
                                 # players on ice
                                 for line in away_ice_list:
                                     graphics.DrawText(offscreen_canvas, font_small, 64, y + fontYoffset, gray, line)
-                                    y += 9
+                                    y += 8
         
+                                y = 63
+                                graphics.DrawText(offscreen_canvas, font_small, 35, y, cyan, "PERIOD: " + str(current_period))
                                 # blit it to the screen  
                                 offscreen_canvas = self.matrix.SwapOnVSync(offscreen_canvas)
     
                                 # If score change...
-                                if home_score != home_score_old:
+                                if home_score > home_score_old:
                                     time.sleep(delay)
                                     if (home_score > home_score_old) and (ignore_first_score_change == 0):
                                         home_score_old = home_score
                                         choice = random.randint(1,3)    
-                                        if home_team == "CAR":
+                                        if home_team == int(team_id):
                                             image = Image.open("/home/pi/nhlscoreboard/images/goal.png")
                                             self.matrix.SetImage(image.convert('RGB'))
                                             time.sleep(5)
@@ -292,12 +297,12 @@ class scoreboard(object):
                                     away_score_old = away_score
 
                                 # If score change...
-                                if away_score != away_score_old:
+                                if away_score > away_score_old:
                                     time.sleep(delay)
                                     if (away_score > away_score_old) and (ignore_first_score_change == 0):
                                         away_score_old = away_score
                                         choice = random.randint(1,3)    
-                                        if away_team == "CAR":
+                                        if away_team == int(team_id):
                                             image = Image.open("/home/pi/nhlscoreboard/images/goal.png")
                                             self.matrix.SetImage(image.convert('RGB'))
                                             time.sleep(5)
