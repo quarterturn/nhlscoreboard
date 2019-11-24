@@ -132,6 +132,7 @@ class scoreboard(object):
         font_big.LoadFont("/home/pi/rpi-rgb-led-matrix/fonts/9x15.bdf")
 
         fontYoffset = 6
+        fontYoffset2 = 8
         x_offset = -64
 
         gameday = False
@@ -316,21 +317,22 @@ class scoreboard(object):
                                y = 7
                                x_offset = x_offset + 1
                                if x_offset > 128:
-                                   x_offset = -64
+                                   x_offset = -128
                                graphics.DrawText(offscreen_canvas, font_small, x + x_offset, y, blue, "GAME TODAY!")
-                               y += fontYoffset
+                               y += fontYoffset2
                                graphics.DrawText(offscreen_canvas, font_small, x + 10 + x_offset, y, green, "GAME TODAY!")
-                               y += fontYoffset
+                               y += fontYoffset2
                                graphics.DrawText(offscreen_canvas, font_small, x + 20 + x_offset, y, red, "GAME TODAY!")
-                               y += fontYoffset
+                               y += fontYoffset2
                                graphics.DrawText(offscreen_canvas, font_small, x + 30 + x_offset, y, yellow, "GAME TODAY!")
-                               y += fontYoffset
+                               y += fontYoffset2
                                graphics.DrawText(offscreen_canvas, font_small, x + 40 + x_offset, y, magenta, "GAME TODAY!")
-                               y += fontYoffset
-                               #graphics.DrawText(offscreen_canvas, font_small, x + 50 + x_offset, y, cyan, "GAME TODAY!")
+                               y += fontYoffset2
+                               graphics.DrawText(offscreen_canvas, font_small, x + 50 + x_offset, y, cyan, "GAME TODAY!")
+                               y += fontYoffset2
                                temptime = datetime.datetime.now()
                                graphics.DrawText(offscreen_canvas, font_small, 0, y, gray, temptime.strftime("%m/%d/%y %H:%M")) 
-                               y += fontYoffset
+                               y += fontYoffset2
                                game_start_time = nhl.fetch_game_start_time(live_stats_link)
                                graphics.DrawText(offscreen_canvas, font_small, 0, y, gray, "GAMETIME: " + game_start_time)
                                offscreen_canvas = self.matrix.SwapOnVSync(offscreen_canvas)
