@@ -106,6 +106,19 @@ def players_on_ice(link):
     except requests.exceptions.RequestException:
         print("Error encountered getting live stats")
     
+def intermission_status(link):
+    """ Function to get the home and away team roster """
+    url = '{0}{1}'.format(NHL_API_URL_BASE, link)
+    response = requests.get(url)
+    stuff = response.json() 
+    try:
+        status = stuff['liveData']['linescore']['intermissionInfo']['inIntermission']
+        intermission_time_remaining = stuff['liveData']['linescore']['intermissionInfo']['intermissionTimeRemaining']
+        return status, intermission_time_remaining
+    except requests.exceptions.RequestException:
+        print("Error encountered getting live stats")
+        return 0,0
+
 def fetch_game(team_id):
     """ Function to get the scores of the game depending on the chosen team.
     Inputs the team ID and returns the score found on web. """

@@ -149,7 +149,7 @@ class scoreboard(object):
         home_score_color = ""
         away_score_color = ""
         do_once = 1
-        ignore_first_score_change = 0
+        ignore_first_score_change = 1
 
         random.seed()
         choice = 1
@@ -207,7 +207,7 @@ class scoreboard(object):
                                         jersey_number = (home_roster['ID'+str(the_id)]['jerseyNumber']).encode("ascii")
                                     except:
                                         jersey_number = "0"
-                                    if int(jersey_number.decode("utf-8")) < 10:
+                                    if int(jersey_number) < 10:
                                         jersey_number = jersey_number.decode("utf-8") + ' '
                                     else:
                                         jersey_number = jersey_number.decode("utf-8")
@@ -216,8 +216,8 @@ class scoreboard(object):
                                     home_ice_list.append(temp_thing)
                                 for the_id in away_on_ice:
                                     jersey_number = (away_roster['ID'+str(the_id)]['jerseyNumber']).encode("ascii")
-                                    if int(jersey_number.decode("utf-8")) < 10:
-                                        jersey_number = jersey_number.decode("utf-8") + ' '
+                                    if int(jersey_number) < 10:
+                                        jersey_number = jersey_number.decode("ascii") + ' '
                                     else:
                                         jersey_number = jersey_number.decode("utf-8")
                                     last_name = (((away_roster['ID'+str(the_id)]['person']['fullName']).split(' ', 1))[1]).encode("ascii")
@@ -278,39 +278,45 @@ class scoreboard(object):
                                     y += 8
         
                                 y = 63
-                                graphics.DrawText(offscreen_canvas, font_small, 35, y, cyan, "PERIOD: " + str(current_period))
+                                status, time_remaining = nhl.intermission_status(live_stats_link)
+                                if status == False:
+                                    graphics.DrawText(offscreen_canvas, font_small, 35, y, cyan, "PERIOD: " + str(current_period))
+                                else:
+                                    m, s = divmod(time_remaining, 60)
+                                    graphics.DrawText(offscreen_canvas, font_small, 0, y, cyan, "INTERMISSION " + '{:02d}:{:02d}'.format(m, s))
                                 # blit it to the screen  
                                 offscreen_canvas = self.matrix.SwapOnVSync(offscreen_canvas)
     
                                 # If score change...
                                 if home_score > home_score_old:
-                                    time.sleep(delay)
-                                    if (home_score > home_score_old) and (ignore_first_score_change == 0):
-                                        home_score_old = home_score
-                                        choice = random.randint(1,3)    
+                                    home_score_old = home_score
+                                    choice = random.randint(1,3)    
+                                    if ignore_first_score_change == 0:
                                         if home_team == int(team_id):
+                                            time.sleep(delay)
                                             image = Image.open("/home/pi/nhlscoreboard/images/goal.png")
                                             self.matrix.SetImage(image.convert('RGB'))
                                             time.sleep(5)
+                                    else:
+                                        ignore_first_score_change = 0
                                 else:
-                                    ignore_first_score_change = 0
                                     home_score_old = home_score
-                                    away_score_old = away_score
 
                                 # If score change...
                                 if away_score > away_score_old:
-                                    time.sleep(delay)
-                                    if (away_score > away_score_old) and (ignore_first_score_change == 0):
-                                        away_score_old = away_score
-                                        choice = random.randint(1,3)    
+                                    away_score_old = away_score
+                                    choice = random.randint(1,3)    
+                                    if ignore_first_score_change == 0:
                                         if away_team == int(team_id):
+                                            time.sleep(delay)
                                             image = Image.open("/home/pi/nhlscoreboard/images/goal.png")
                                             self.matrix.SetImage(image.convert('RGB'))
                                             time.sleep(5)
+                                    else:
+                                        ignore_first_score_change = 0
+                                            
                                 else:
-                                    ignore_first_score_change = 0
                                     away_score_old = away_score
-                                    home_score_old = home_score
 
                             if current_period == 0:
                                offscreen_canvas.Clear()
