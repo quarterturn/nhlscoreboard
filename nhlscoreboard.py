@@ -291,7 +291,7 @@ class scoreboard(object):
                                 if home_score > home_score_old:
                                     home_score_old = home_score
                                     choice = random.randint(1,3)    
-                                    if ignore_first_score_change > 0:
+                                    if ignore_first_score_change == 0:
                                         if home_team == int(team_id):
                                             time.sleep(delay)
                                             image = Image.open("/home/pi/nhlscoreboard/images/goal.png")
@@ -306,7 +306,7 @@ class scoreboard(object):
                                 if away_score > away_score_old:
                                     away_score_old = away_score
                                     choice = random.randint(1,3)    
-                                    if ignore_first_score_change > 0:
+                                    if ignore_first_score_change == 0:
                                         if away_team == int(team_id):
                                             time.sleep(delay)
                                             image = Image.open("/home/pi/nhlscoreboard/images/goal.png")
