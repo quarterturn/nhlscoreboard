@@ -19,7 +19,7 @@ class scoreboard(object):
         now = datetime.datetime.now()
         # Set sleep time for no game today
         if "day" in sleep_period:
-            delta = datetime.timedelta(hours=12)
+            delta = datetime.timedelta(hours=3)
         # Set sleep time for not in season
         elif "season" in sleep_period:
             # If in August, 31 days else 30
@@ -97,7 +97,7 @@ class scoreboard(object):
         options.pixel_mapper_config = "U-mapper"
         options.row_address_type = 0
         options.multiplexing = 0
-        options.pwm_bits = 11
+        options.pwm_bits = 8
         options.brightness = 100
         options.pwm_lsb_nanoseconds = 130
         options.led_rgb_sequence = "RBG"
@@ -149,7 +149,7 @@ class scoreboard(object):
         home_score_color = ""
         away_score_color = ""
         do_once = 1
-        ignore_first_score_change = 1
+        ignore_first_score_change = 2
 
         random.seed()
         choice = 1
@@ -291,14 +291,14 @@ class scoreboard(object):
                                 if home_score > home_score_old:
                                     home_score_old = home_score
                                     choice = random.randint(1,3)    
-                                    if ignore_first_score_change == 0:
+                                    if ignore_first_score_change > 0:
                                         if home_team == int(team_id):
                                             time.sleep(delay)
                                             image = Image.open("/home/pi/nhlscoreboard/images/goal.png")
                                             self.matrix.SetImage(image.convert('RGB'))
                                             time.sleep(5)
                                     else:
-                                        ignore_first_score_change = 0
+                                        ignore_first_score_change = ignore_first_score_change - 1
                                 else:
                                     home_score_old = home_score
 
@@ -306,14 +306,14 @@ class scoreboard(object):
                                 if away_score > away_score_old:
                                     away_score_old = away_score
                                     choice = random.randint(1,3)    
-                                    if ignore_first_score_change == 0:
+                                    if ignore_first_score_change > 0:
                                         if away_team == int(team_id):
                                             time.sleep(delay)
                                             image = Image.open("/home/pi/nhlscoreboard/images/goal.png")
                                             self.matrix.SetImage(image.convert('RGB'))
                                             time.sleep(5)
                                     else:
-                                        ignore_first_score_change = 0
+                                        ignore_first_score_change = ignore_first_score_change - 1
                                             
                                 else:
                                     away_score_old = away_score
