@@ -19,7 +19,7 @@ class scoreboard(object):
         now = datetime.datetime.now()
         # Set sleep time for no game today
         if "day" in sleep_period:
-            delta = datetime.timedelta(hours=3)
+            delta = datetime.timedelta(hours=12)
         # Set sleep time for not in season
         elif "season" in sleep_period:
             # If in August, 31 days else 30
