@@ -127,11 +127,11 @@ class scoreboard(object):
         font_medium = graphics.Font()
         font_medium.LoadFont("/home/pi/rpi-rgb-led-matrix/fonts/7x13.bdf")
         font_small = graphics.Font()
-        font_small.LoadFont("/home/pi/rpi-rgb-led-matrix/fonts/6x9.bdf")
+        font_small.LoadFont("/home/pi/rpi-rgb-led-matrix/fonts/6x10.bdf")
         font_big = graphics.Font() 
         font_big.LoadFont("/home/pi/rpi-rgb-led-matrix/fonts/9x15.bdf")
 
-        fontYoffset = 6
+        fontYoffset = 8
         fontYoffset2 = 8
         x_offset = -64
 
@@ -149,7 +149,7 @@ class scoreboard(object):
         home_score_color = ""
         away_score_color = ""
         do_once = 1
-        ignore_first_score_change = 2
+        ignore_first_score_change = 1
 
         random.seed()
         choice = 1
@@ -208,9 +208,16 @@ class scoreboard(object):
                                     except:
                                         jersey_number = "0"
                                     if int(jersey_number) < 10:
-                                        jersey_number = jersey_number.decode("utf-8") + ' '
+                                        try:
+                                            jersey_number = jersey_number.decode("utf-8") + ' '
+                                        except:
+                                            jersey_number = '00' 
                                     else:
-                                        jersey_number = jersey_number.decode("utf-8")
+                                        try:
+                                            jersey_number = jersey_number.decode("utf-8")
+                                        except:
+                                            jersey_number = '00'
+
                                     last_name = (((home_roster['ID'+str(the_id)]['person']['fullName']).split(' ', 1))[1]).encode("ascii")
                                     temp_thing = jersey_number + ' ' + (last_name[0:7].upper()).decode("utf-8")
                                     home_ice_list.append(temp_thing)
@@ -277,7 +284,7 @@ class scoreboard(object):
                                     graphics.DrawText(offscreen_canvas, font_small, 64, y + fontYoffset, gray, line)
                                     y += 8
         
-                                y = 63
+                                y = 64
                                 status, time_remaining = nhl.intermission_status(live_stats_link)
                                 if status == False:
                                     graphics.DrawText(offscreen_canvas, font_small, 35, y, cyan, "PERIOD: " + str(current_period))
@@ -298,7 +305,7 @@ class scoreboard(object):
                                             self.matrix.SetImage(image.convert('RGB'))
                                             time.sleep(5)
                                     else:
-                                        ignore_first_score_change = ignore_first_score_change - 1
+                                        ignore_first_score_change = 0
                                 else:
                                     home_score_old = home_score
 
@@ -313,10 +320,12 @@ class scoreboard(object):
                                             self.matrix.SetImage(image.convert('RGB'))
                                             time.sleep(5)
                                     else:
-                                        ignore_first_score_change = ignore_first_score_change - 1
+                                        ignore_first_score_change = 0
                                             
                                 else:
                                     away_score_old = away_score
+
+                                ignore_first_score_change = 0
 
                             if current_period == 0:
                                offscreen_canvas.Clear()
