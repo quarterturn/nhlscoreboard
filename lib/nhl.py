@@ -1,6 +1,7 @@
 import requests
 from datetime import datetime
 from dateutil import tz
+import time
 
 NHL_API_URL = "http://statsapi.web.nhl.com/api/v1/"
 NHL_API_URL_BASE = "http://statsapi.web.nhl.com"
@@ -66,9 +67,9 @@ def fetch_game_start_time(link):
         to_zone = tz.tzlocal()
         gametime = gametime.replace(tzinfo=from_zone)
         gametime = gametime.astimezone(to_zone)
-        return gametime.strftime("%H:%M")
     except requests.exceptions.RequestException:
         print("Error encountered getting live stats")
+    return gametime.strftime("%H:%M")
          
 def fetch_rosters(link):
     """ Function to get the home and away team roster """
@@ -78,9 +79,9 @@ def fetch_rosters(link):
     try:
         home_roster = stuff['liveData']['boxscore']['teams']['home']['players']
         away_roster = stuff['liveData']['boxscore']['teams']['away']['players']
-        return home_roster, away_roster
     except requests.exceptions.RequestException:
         print("Error encountered getting live stats")
+    return home_roster, away_roster
 
 def fetch_goalies(link):
     """ Function to get the home and away goalies """
@@ -90,9 +91,9 @@ def fetch_goalies(link):
     try:
         home_goalie = stuff['liveData']['boxscore']['teams']['home']['goalies']
         away_goalie = stuff['liveData']['boxscore']['teams']['away']['goalies']
-        return home_goalie, away_goalie
     except requests.exceptions.RequestException:
         print("Error encountered getting live stats")
+    return home_goalie, away_goalie
 
 def players_on_ice(link):
     """ Function to get the home and away team roster """
@@ -104,7 +105,13 @@ def players_on_ice(link):
         away_on_ice = stuff['liveData']['boxscore']['teams']['away']['onIce']
         return home_on_ice, away_on_ice
     except requests.exceptions.RequestException:
-        print("Error encountered getting live stats")
+        time.sleep(5)
+        try:
+            home_on_ice = stuff['liveData']['boxscore']['teams']['home']['onIce']
+            away_on_ice = stuff['liveData']['boxscore']['teams']['away']['onIce']
+        except:
+            print("Error encountered getting live stats")
+    return home_on_ice, away_on_ice
     
 def intermission_status(link):
     """ Function to get the home and away team roster """
@@ -114,10 +121,10 @@ def intermission_status(link):
     try:
         status = stuff['liveData']['linescore']['intermissionInfo']['inIntermission']
         intermission_time_remaining = stuff['liveData']['linescore']['intermissionInfo']['intermissionTimeRemaining']
-        return status, intermission_time_remaining
     except requests.exceptions.RequestException:
         print("Error encountered getting live stats")
         return 0,0
+    return status, intermission_time_remaining
 
 def fetch_game(team_id):
     """ Function to get the scores of the game depending on the chosen team.
@@ -134,10 +141,9 @@ def fetch_game(team_id):
         away_score = int(score['dates'][0]['games'][0]['teams']['away']['score'])
         away_team = int(score['dates'][0]['games'][0]['teams']['away']['team']['id'])
         live_stats_link = score['dates'][0]['games'][0]['link']
-        # Print score for test
-        return home_score, home_team, away_score, away_team, live_stats_link
     except requests.exceptions.RequestException:
         print("Error encountered, returning 0 for score")
+    return home_score, home_team, away_score, away_team, live_stats_link
 
 def fetch_score(team_id):
     """ Function to get the score of the game depending on the chosen team.

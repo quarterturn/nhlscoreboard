@@ -261,26 +261,27 @@ class scoreboard(object):
                                 offscreen_canvas.Clear() 
 
                                 # teams
-                                # home on left
+                                # away on left
+                                # home on right
                                 # 3-letter team, score, sog
-                                graphics.DrawText(offscreen_canvas, font_small, 0, y + fontYoffset, home_team_color, teams[home_team])
-                                graphics.DrawText(offscreen_canvas, font_small, 28, y + fontYoffset, home_score_color, str(home_score))
-                                graphics.DrawText(offscreen_canvas, font_small, 49, y + fontYoffset, yellow, str(home_sog))
+                                graphics.DrawText(offscreen_canvas, font_small, 0, y + fontYoffset, away_team_color, teams[away_team])
+                                graphics.DrawText(offscreen_canvas, font_small, 28, y + fontYoffset, away_score_color, str(away_score))
+                                graphics.DrawText(offscreen_canvas, font_small, 49, y + fontYoffset, yellow, str(away_sog))
                                 y += 8
                                 # players on ice
-                                for line in home_ice_list:
+                                for line in away_ice_list:
                                     graphics.DrawText(offscreen_canvas, font_small, 0, y + fontYoffset, gray, line)
                                     y += 8
         
                                 # away on left
                                 y = 0
                                 # 3-letter team, score, sog
-                                graphics.DrawText(offscreen_canvas, font_small, 64, y + fontYoffset, away_team_color, teams[away_team])
-                                graphics.DrawText(offscreen_canvas, font_small, 92, y + fontYoffset, away_score_color, str(away_score))
-                                graphics.DrawText(offscreen_canvas, font_small, 113, y + fontYoffset, yellow, str(away_sog))
+                                graphics.DrawText(offscreen_canvas, font_small, 64, y + fontYoffset, home_team_color, teams[home_team])
+                                graphics.DrawText(offscreen_canvas, font_small, 92, y + fontYoffset, home_score_color, str(home_score))
+                                graphics.DrawText(offscreen_canvas, font_small, 113, y + fontYoffset, yellow, str(home_sog))
                                 y += 8
                                 # players on ice
-                                for line in away_ice_list:
+                                for line in home_ice_list:
                                     graphics.DrawText(offscreen_canvas, font_small, 64, y + fontYoffset, gray, line)
                                     y += 8
         
@@ -373,7 +374,7 @@ if __name__ == "__main__":
     my_scoreboard = scoreboard()
     try:
         # Start loop
-        print("Press CTRL-C to stop sample")
+        print("Press CTRL-C to stop")
         my_scoreboard.run()
     except KeyboardInterrupt:
         print("Exiting\n")
