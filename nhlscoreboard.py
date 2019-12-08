@@ -218,7 +218,11 @@ class scoreboard(object):
                                         except:
                                             jersey_number = '00'
 
-                                    last_name = (((home_roster['ID'+str(the_id)]['person']['fullName']).split(' ', 1))[1]).encode("ascii")
+                                    try:
+                                        last_name = (((home_roster['ID'+str(the_id)]['person']['fullName']).split(' ', 1))[1]).encode("ascii")
+                                    except:
+                                        last_name = ' '
+
                                     temp_thing = jersey_number + ' ' + (last_name[0:7].upper()).decode("utf-8")
                                     home_ice_list.append(temp_thing)
                                 for the_id in away_on_ice:
