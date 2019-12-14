@@ -223,16 +223,31 @@ class scoreboard(object):
                                     except:
                                         last_name = ' '
 
-                                    temp_thing = jersey_number + ' ' + (last_name[0:7].upper()).decode("utf-8")
+                                    try:
+                                        temp_thing = jersey_number + ' ' + (last_name[0:7].upper()).decode("utf-8")
+                                    except:
+                                        temp_thing = ' '
                                     home_ice_list.append(temp_thing)
                                 for the_id in away_on_ice:
-                                    jersey_number = (away_roster['ID'+str(the_id)]['jerseyNumber']).encode("ascii")
+                                    try:
+                                        jersey_number = (away_roster['ID'+str(the_id)]['jerseyNumber']).encode("ascii")
+                                    except:
+                                        jersey_number = '00'
                                     if int(jersey_number) < 10:
-                                        jersey_number = jersey_number.decode("ascii") + ' '
+                                        try:
+                                            jersey_number = jersey_number.decode("ascii") + ' '
+                                        except:
+                                            jersey_number = 0
                                     else:
                                         jersey_number = jersey_number.decode("utf-8")
-                                    last_name = (((away_roster['ID'+str(the_id)]['person']['fullName']).split(' ', 1))[1]).encode("ascii")
-                                    temp_thing = jersey_number + ' ' + (last_name[0:7].upper()).decode("utf-8")
+                                    try:
+                                        last_name = (((away_roster['ID'+str(the_id)]['person']['fullName']).split(' ', 1))[1]).encode("ascii")
+                                    except:
+                                        last_name = ' '
+                                    try:
+                                        temp_thing = jersey_number + ' ' + (last_name[0:7].upper()).decode("utf-8")
+                                    except:
+                                        temp_thing = ' '
                                     away_ice_list.append(temp_thing)
     
                                 # determine score colors
