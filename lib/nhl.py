@@ -69,6 +69,7 @@ def fetch_game_start_time(link):
         gametime = gametime.astimezone(to_zone)
     except requests.exceptions.RequestException:
         print("Error encountered getting live stats")
+        return "00:00"
     return gametime.strftime("%H:%M")
          
 def fetch_rosters(link):

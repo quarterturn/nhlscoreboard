@@ -137,6 +137,8 @@ class scoreboard(object):
 
         gameday = False
         season = False
+        home_roster = {}
+        away_roster = {}
         home_score = 0
         home_score_old = 0
         away_score = 0
@@ -175,7 +177,6 @@ class scoreboard(object):
                     gameday = nhl.check_if_game(team_id)
 
                     if gameday:
-
                         # check end of game
                         game_end = nhl.check_game_end(team_id)
 
@@ -188,13 +189,15 @@ class scoreboard(object):
 
                             # get stats from the game
                             current_period, home_sog, away_sog, home_powerplay, away_powerplay, time_remaining = nhl.fetch_live_stats(live_stats_link)
-                            # the the rosters just once at the start
-                            if do_once:
-                                home_roster, away_roster = nhl.fetch_rosters(live_stats_link)
-                                do_once = 0
 
                             if current_period > 0:
     
+                                # get the rosters just once at the start
+                                if do_once:
+                                    while ((len(home_roster) < 5) or (len(away_roster) < 5)):
+                                        home_roster, away_roster = nhl.fetch_rosters(live_stats_link)
+                                    do_once = 0
+
                                 # get the players on ice
                                 home_on_ice, away_on_ice = nhl.players_on_ice(live_stats_link)
                                 # build a list like so for each team
@@ -307,7 +310,7 @@ class scoreboard(object):
                                 y = 64
                                 status, time_remaining = nhl.intermission_status(live_stats_link)
                                 if status == False:
-                                    graphics.DrawText(offscreen_canvas, font_small, 35, y, cyan, "PERIOD: " + str(current_period))
+                                    graphics.DrawText(offscreen_canvas, font_small, 35, y, cyan, "PERIOD " + str(current_period))
                                 else:
                                     m, s = divmod(time_remaining, 60)
                                     graphics.DrawText(offscreen_canvas, font_small, 0, y, cyan, "INTERMISSION " + '{:02d}:{:02d}'.format(m, s))
@@ -374,6 +377,8 @@ class scoreboard(object):
                                
 
                         else:
+                            home_roster.clear()
+                            away_roster.clear()
                             old_score = 0 # Reset for new game
                             self.matrix.Clear()
                             offscreen_canvas.Clear()
