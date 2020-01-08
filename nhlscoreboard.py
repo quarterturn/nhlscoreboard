@@ -327,6 +327,11 @@ class scoreboard(object):
                                             image = Image.open("/home/pi/nhlscoreboard/images/goal.png")
                                             self.matrix.SetImage(image.convert('RGB'))
                                             time.sleep(5)
+                                        else:
+                                            time.sleep(delay)
+                                            image = Image.open("/home/pi/nhlscoreboard/images/sad-rod.gif")
+                                            self.matrix.SetImage(image.convert('RGB'))
+                                            time.sleep(5)
                                     else:
                                         ignore_first_score_change = 0
                                 else:
@@ -340,6 +345,11 @@ class scoreboard(object):
                                         if away_team == int(team_id):
                                             time.sleep(delay)
                                             image = Image.open("/home/pi/nhlscoreboard/images/goal.png")
+                                            self.matrix.SetImage(image.convert('RGB'))
+                                            time.sleep(5)
+                                        else:
+                                            time.sleep(delay)
+                                            image = Image.open("/home/pi/nhlscoreboard/images/sad-rod.gif")
                                             self.matrix.SetImage(image.convert('RGB'))
                                             time.sleep(5)
                                     else:
