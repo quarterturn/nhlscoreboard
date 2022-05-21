@@ -97,9 +97,10 @@ class scoreboard(object):
         options.pixel_mapper_config = "U-mapper"
         options.row_address_type = 0
         options.multiplexing = 0
-        options.pwm_bits = 8
+        options.pwm_bits = 6
         options.brightness = 100
         options.pwm_lsb_nanoseconds = 130
+        options.limit_refresh_rate_hz = 200
         options.led_rgb_sequence = "RBG"
         options.show_refresh_rate = 0
         options.gpio_slowdown = 1
@@ -167,10 +168,11 @@ class scoreboard(object):
 
             while (True):
 
-                time.sleep(5)
+                time.sleep(2)
 
                 # check if in season
                 season = nhl.check_season()
+                season = 1
                 if season:
 
                     # check game
@@ -222,13 +224,13 @@ class scoreboard(object):
                                             jersey_number = '00'
 
                                     try:
-                                        last_name = (((home_roster['ID'+str(the_id)]['person']['fullName']).split(' ', 1))[1]).encode("ascii")
-                                    except:
+                                        last_name = (((home_roster['ID'+str(the_id)]['person']['fullName']).split(' ', 1))[1]).encode('utf-8').strip()
+                                    except UnicodeEncodeError:
                                         last_name = ' '
 
                                     try:
                                         temp_thing = jersey_number + ' ' + (last_name[0:7].upper()).decode("utf-8")
-                                    except:
+                                    except TypeError:
                                         temp_thing = ' '
                                     home_ice_list.append(temp_thing)
                                 for the_id in away_on_ice:
@@ -239,17 +241,17 @@ class scoreboard(object):
                                     if int(jersey_number) < 10:
                                         try:
                                             jersey_number = jersey_number.decode("ascii") + ' '
-                                        except:
+                                        except TypeError:
                                             jersey_number = 0
                                     else:
                                         jersey_number = jersey_number.decode("utf-8")
                                     try:
-                                        last_name = (((away_roster['ID'+str(the_id)]['person']['fullName']).split(' ', 1))[1]).encode("ascii")
-                                    except:
+                                        last_name = (((away_roster['ID'+str(the_id)]['person']['fullName']).split(' ', 1))[1]).encode('utf-8').strip()
+                                    except TypeError:
                                         last_name = ' '
                                     try:
                                         temp_thing = jersey_number + ' ' + (last_name[0:7].upper()).decode("utf-8")
-                                    except:
+                                    except TypeError:
                                         temp_thing = ' '
                                     away_ice_list.append(temp_thing)
     
@@ -390,6 +392,7 @@ class scoreboard(object):
                             home_roster.clear()
                             away_roster.clear()
                             old_score = 0 # Reset for new game
+                            current_period = 0
                             self.matrix.Clear()
                             offscreen_canvas.Clear()
                             do_once = 1
